@@ -9,7 +9,7 @@ router.register(r'User_OpenAuth', views.User_OpenAuthSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
-    url(r'^user/get_user_info.uds/$', views.get_user_info),
+    url(r'^user/get_user_info.uds$', views.get_user_info),
     ]
 #url(r'^user/get_user_info.uds/?userid=P<0-9>+/$', views.get_user_info),
 # url(r'^users/$', views.users_detail),

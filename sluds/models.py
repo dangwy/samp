@@ -2,18 +2,19 @@
 from __future__ import unicode_literals
 from django.db import models
 
-class ReqBodyPrefix(models.Model):
-    version = models.CharField(max_length=6)
-    action = models.CharField(max_length=50)
-    class Meta:
-        abstract = True
-
-class ResBodyPrefix(models.Model):
-    version = models.CharField(max_length=6)
-    request_id = models.CharField(max_length=50)
-    code = models.CharField(max_length=4)
-    class Meta:
-        abstract = True
+# class ReqBodyPrefix(models.Model):
+#     version = models.CharField(max_length=6)
+#     action = models.CharField(max_length=50)
+#     userid = models.IntegerField()
+#     class Meta:
+#         abstract = True
+#
+# class ResBodyPrefix(models.Model):
+#     version = models.CharField(max_length=6)
+#     request_id = models.CharField(max_length=50)
+#     code = models.CharField(max_length=4)
+#     class Meta:
+#         abstract = True
 
 class Users(models.Model):
     UserID = models.IntegerField(primary_key=True)
@@ -55,7 +56,7 @@ class User_OpenAuth(models.Model):
         db_table = 'User_OpenAuth'
 
     def __repr__(self):
-        return u'<User_OpenAuth: %d, %s >' % (self.UserID,self.NickName)
+        return u'<User_OpenAuth: %d, %s>' % (self.UserID,self.NickName)
 
 class User_LocalAuth(models.Model):
     ID = models.IntegerField(primary_key=True, blank=False)

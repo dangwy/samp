@@ -1,4 +1,4 @@
-from models import Users, User_OpenAuth, User_LocalAuth, ReqBodyPrefix, ResBodyPrefix
+from models import Users, User_OpenAuth, User_LocalAuth
 from rest_framework import serializers
 
 class UsersSerializer(serializers.HyperlinkedModelSerializer):
@@ -17,3 +17,7 @@ class User_LocalAuthSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         module = User_LocalAuth
         fields = ('ID','UserID','LAuthType','UserName','Password','CTime','MTime')
+
+# class ReqBodyPrefixSerializer(serializers.HyperlinkedModelSerializer):
+#     class Meta:
+#         fields = ('version','action','userid')

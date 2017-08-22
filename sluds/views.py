@@ -3,20 +3,21 @@ from __future__ import unicode_literals
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import  JSONParser
+from rest_framework.parsers import JSONParser
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from models import Users, User_OpenAuth, User_LocalAuth, ReqBodyPrefix,ResBodyPrefix
+from models import Users, User_OpenAuth, User_LocalAuth
 from rest_framework import viewsets
 from serializers import UsersSerializer, User_OpenAuthSerializer
 from django.core import serializers
+import json,simplejson
 
 import logging
-logger = logging.getLogger(__name__)
-#logger = logging.getLogger('django')
+#logger = logging.getLogger(__name__)
+logger = logging.getLogger('django')
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = Users.objects.all()
@@ -43,7 +44,7 @@ class User_OpenAuthSet(viewsets.ModelViewSet):
 #     logger.error(serializer.errors)
 #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'POST'])
 def get_user_info(request):
     """
     用户信息查询接口
@@ -51,8 +52,29 @@ def get_user_info(request):
     :param pk:
     :return:
     """
+    if request.method == 'POST':
+        logger.info(request.body)
+        req = JSONParser().parse(request)
+        if not req.has_key('version'):
+            return Response("error, request error")
+        if not req.has_key('action'):
+            return Response("error, request not action")
+        if not req.has_key('params'):
+            return Response("error, request not params")
+        if req['version'] == "1.0" and req['action'] == "get_user_info":
+            userid = req['params']['UserID']
+            try:
+                users = Users.objects.get(pk = userid)
+                serializer = UsersSerializer(users)
+                req = serializer.data
+                logger.info(req)
+                return Response(req)
+            except:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+        else:
+            logger.error("ERROR: Request parameter value illegal.")
+            return Response("ERROR: Request parameter value illegal.")
 
-    logger.info(request.body)
     #data = JSONParser().parse(request)
     #data = serializers.serialize("xml", SomeModel.objects.all())
     #serializer = UsersSerializer(data = data)
