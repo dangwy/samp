@@ -30,3 +30,6 @@
 
 # 测试命令
 - curl -i -H "Content-Type: application/json" -X POST -d "{"""title""":"""Read a book"""}" http://localhost:5000/todo/api/v1.0/tasks
+
+# 管理账号
+admin/dwl1234567890
