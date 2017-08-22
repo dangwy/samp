@@ -51,6 +51,7 @@ def get_user_info(request):
     :param pk:
     :return:
     """
+
     logger.info(request.body)
     #data = JSONParser().parse(request)
     #data = serializers.serialize("xml", SomeModel.objects.all())
