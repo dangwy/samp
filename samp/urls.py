@@ -18,7 +18,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^sluds/v1.0/', include('sluds.urls', namespace="sluds")),
+    url(r'^sluds/', include('sluds.urls', namespace="sluds")),
 ]
 
 # url(r'^admin/', include(admin.site.urls)),

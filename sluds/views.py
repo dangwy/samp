@@ -11,9 +11,10 @@ from rest_framework.response import Response
 
 from models import Users, User_OpenAuth, User_LocalAuth
 from rest_framework import viewsets
-from serializers import UsersSerializer, User_OpenAuthSerializer
+from serializers import UsersSerializer, User_OpenAuthSerializer, User_LocalAuthSerializer
 from django.core import serializers
 import json,simplejson
+from rcode import returncodeDict
 
 import logging
 #logger = logging.getLogger(__name__)
@@ -23,131 +24,101 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = Users.objects.all()
     serializer_class = UsersSerializer
 
-class User_OpenAuthSet(viewsets.ModelViewSet):
+class User_OpenAuthViewSet(viewsets.ModelViewSet):
     queryset = User_OpenAuth.objects.all()
     serializer_class = User_OpenAuthSerializer
 
-# @api_view(['GET'])
-# def users_detail(request):
-#     logger.debug(request)
-#     if request.method == 'GET':
-#         users = Users.objects.all()
-#         serializer = UsersSerializer(users, many=True)
-#         logger.debug(serializer.data)
-#         return Response(serializer.data)
-#     elif request.method == 'POST':
-#         serializer = UsersSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             logger.debug(serializer.data)
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#     logger.error(serializer.errors)
-#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class User_LocalAuthViewSet(viewsets.ModelViewSet):
+    queryset = User_LocalAuth.objects.all()
+    serializer_class = User_LocalAuthSerializer
+
+def resprefix(returncode):
+    res = {}
+    res['code'] = returncodeDict[returncode]['code']
+    res['msg'] = returncodeDict[returncode]['msg']
+    return  res
+
+@api_view(['GET'])
+def users_detail(request):
+    logger.debug(request)
+    if request.method == 'GET':
+        users = Users.objects.all()
+        serializer = UsersSerializer(users, many=True)
+        logger.debug(serializer.data)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = UsersSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            logger.debug(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    logger.error(serializer.errors)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST'])
 def get_user_info(request):
     """
-    用户信息查询接口
-    :param request:
-    :param pk:
-    :return:
+    (30)用户信息查询接口
     """
-    if request.method == 'POST':
-        logger.info(request.body)
-        req = JSONParser().parse(request)
-        if not req.has_key('version'):
-            return Response("error, request error")
-        if not req.has_key('action'):
-            return Response("error, request not action")
-        if not req.has_key('params'):
-            return Response("error, request not params")
-        if req['version'] == "1.0" and req['action'] == "get_user_info":
+    logger.info(request.body)
+    try:
+        if request.method == 'POST':
+            req = JSONParser().parse(request)
+            version = req['version']
+            action = req['action']
             userid = req['params']['UserID']
-            try:
-                users = Users.objects.get(pk = userid)
-                serializer = UsersSerializer(users)
-                req = serializer.data
-                logger.info(req)
-                return Response(req)
-            except:
-                return Response(status=status.HTTP_404_NOT_FOUND)
-        else:
-            logger.error("ERROR: Request parameter value illegal.")
-            return Response("ERROR: Request parameter value illegal.")
+        elif request.method == 'GET':
+            version = request.GET.get('version')
+            action = request.GET.get('action')
+            userid = request.GET.get('UserID')
+        if version != "1.0" or action != "get_user_info":
+            logger.error(returncodeDict['RC990501'])
+            return Response(returncodeDict['RC990501'])
+    except:
+        logger.error(returncodeDict['RC990501'])
+        return Response(returncodeDict['RC990501'])
+    else:
+        try:
+            users = Users.objects.get(pk = userid)
+            serializer = UsersSerializer(users)
+            resdata = serializer.data
+            res = resprefix('RC8200')
+            res['result'] = resdata
+            logger.info(res)
+            return Response(res)
+        except:
+            logger.error(returncodeDict['RC990506'])
+            return Response(returncodeDict['RC990506'])
 
-    #data = JSONParser().parse(request)
-    #data = serializers.serialize("xml", SomeModel.objects.all())
-    #serializer = UsersSerializer(data = data)
-    # if request.POST.has_key('UserID'):
-    #     userid = request.POST['UserID']
-    # try:
-    #     users = Users.objects.get(pk=userid)
-    #     serializer = UsersSerializer(users)
-    #     return Response(serializer.data)
-    # except Users.DoesNotExist:
-    #     logger.error(status=status.HTTP_404_NOT_FOUND)
-    #     return Response(status=status.HTTP_404_NOT_FOUND)
+@api_view(['POST'])
+def update_user_info(request):
+    """
+    (31)用户基本信息更新接口
+    """
+    logger.info(request.body)
 
-    # if request.method == 'GET':
-    #     serializer = UsersSerializer(users)
-    #     logger.debug(serializer.data)
-    #     return Response(serializer.data)
-    #
-    # elif request.method == 'PUT':
-    #     serializer = UsersSerializer(users, data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         logger.debug(serializer.data)
-    #         return Response(serializer.data)
-    #     logger.error(serializer.errors)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    # elif request.method == 'DELETE':
-    #     users.delete()
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
-#
-# class JSONResponse(HttpResponse):
-#     def __init__(self, data, **kwargs):
-#         content = JSONRenderer().render(data)
-#         kwargs['content_type'] = 'application/json'
-#         super(JSONResponse,self).__init__(content, **kwargs)
-#
-# @csrf_exempt
-# def users_list(request):
-#     if request.method == 'GET':
-#         users = Users.objects.all()
-#         serializer = UsersSerializer(users)
-#         return JSONResponse(serializer.data)
-#
-#     elif request.method == 'POST':
-#         data = JSONParser().parse(request)
-#         serializer = UsersSerializer(data = data)
-#         if serializer.is_valid():
-#             return JSONResponse(serializer.data, status= 201)
-#         else:
-#             return JSONResponse(serializer.errors, status= 400)
-#
-# @csrf_exempt
-# def users_detail(request, pk):
-#     try:
-#         users = Users.objects.get(pk = pk)
-#     except Users.DoesNotExist:
-#         return HttpResponse(status= 404)
-#     #question = get_object_or_404(Question, pk=question_id)
-#     if request.method == 'GET':
-#         serializer = UsersSerializer(users)
-#         return JSONResponse(serializer.data)
-#
-#     elif request.method == 'PUT':
-#         data = JSONParser().parse(request)
-#         serializer = UsersSerializer(users, data=data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return JSONResponse(serializer.data)
-#         else:
-#             return JSONResponse(serializer.errors, status=400)
-#
-#     elif request.method == 'DELETE':
-#         users.delete()
-#         return HttpResponse(status=204)
+    if request.method == 'POST':
+        req = JSONParser().parse(request)
+        version = req['version']
+        action = req['action']
+        userid = req['params']['UserID']
+        if version != "1.0" or action != "update_user_info":
+            logger.error(returncodeDict['RC990501'])
+            return Response(returncodeDict['RC990501'])
+        #try:
+        users = Users.objects.get(pk = userid)
+        serializer = UsersSerializer(Users, data=req['params'])
+
+        if serializer.is_valid():
+            print serializer.errors
+            print serializer.error_messages
+            print serializer.validated_data
+            serializer.save()
+        res = resprefix('RC8200')
+        logger.info(res)
+        return Response(res)
+        # except Users.DoesNotExist:
+        #     logger.error(returncodeDict['RC990506'])
+        #     return Response(returncodeDict['RC990506'])
 
 
