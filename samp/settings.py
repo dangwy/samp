@@ -17,11 +17,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'polls',
     'quickstart',
+    'rest_framework',
     'sluds',
-]
 
+]
+#'snippets',
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -30,8 +33,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
-
+DEBUG_TOOLBAR_PATCH_SETTINGS = False
 ROOT_URLCONF = 'samp.urls'
 
 TEMPLATES = [
@@ -93,7 +97,7 @@ LANGUAGE_CODE = 'zh-hans'
 TIME_ZONE = 'Asia/Shanghai'
 USE_I18N = True
 USE_L10N = True
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -120,9 +124,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.163.com'  # QQ邮箱SMTP服务器(邮箱需要开通SMTP服务)
 EMAIL_PORT = 25  # QQ邮箱SMTP服务端口
 EMAIL_HOST_USER = 'dangwenyun@163.com'  # 我的邮箱帐号
-EMAIL_HOST_PASSWORD = ''  # 授权码
-EMAIL_SUBJECT_PREFIX = 'sluds-error'  # 为邮件标题的前缀,默认是'[django]'
-EMAIL_USE_TLS = True  # 开启安全链接
+EMAIL_HOST_PASSWORD = 'Dwyun781202'  # 授权码
+EMAIL_SUBJECT_PREFIX = 'Regist'  # 为邮件标题的前缀,默认是'[django]'
+EMAIL_USE_TLS = False  # 开启安全链接
 DEFAULT_FROM_EMAIL = SERVER_EMAIL = EMAIL_HOST_USER  # 设置发件人
 
 LOGGING = {

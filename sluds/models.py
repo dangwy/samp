@@ -1,32 +1,23 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.db import models
+from datetime import datetime
+from django.utils import timezone
 
-# class ReqBodyPrefix(models.Model):
-#     version = models.CharField(max_length=6)
-#     action = models.CharField(max_length=50)
-#     userid = models.IntegerField()
-#     class Meta:
-#         abstract = True
-#
-# class ResBodyPrefix(models.Model):
-#     version = models.CharField(max_length=6)
-#     request_id = models.CharField(max_length=50)
-#     code = models.CharField(max_length=4)
-#     class Meta:
-#         abstract = True
 
 class Users(models.Model):
-    UserID = models.IntegerField(primary_key=True)
-    NickName = models.CharField(max_length=128, default='')
-    LevelID = models.IntegerField()
-    AccountPic_URL = models.CharField(max_length=255, default='')
-    SelfIntroduction = models.CharField(max_length=255, default='')
-    Gender = models.IntegerField()
-    LocationProvince = models.CharField(max_length=50, default='')
-    LocationCity = models.CharField(max_length=100, default='')
-    CTime = models.DateTimeField(auto_now_add=True)
-    MTime = models.DateTimeField(auto_now_add=True)
+    UserID = models.IntegerField('用户编号',primary_key=True)
+    NickName = models.CharField('用户昵称',max_length=128, default='')
+    LevelID = models.IntegerField('用户级别',blank=True, default=1)
+    AccountPic_URL = models.CharField('用户头像URL',max_length=255,blank=False, default='')
+    SelfIntroduction = models.CharField('自我介绍',max_length=255,blank=False, default='')
+    Gender = models.IntegerField('性别')
+    LocationProvince = models.CharField('省份',max_length=50, blank=False, default='')
+    LocationCity = models.CharField('城市',max_length=100, blank=False, default='')
+    #CTime = models.DateTimeField('创建时间', default=datetime.now())
+    #MTime = models.DateTimeField('更新时间', default=datetime.now())
+    CTime = models.DateTimeField('创建时间', default=timezone.now)
+    MTime = models.DateTimeField('更新时间', default=timezone.now)
 
     class Meta:
         db_table = 'Users'
@@ -36,7 +27,7 @@ class Users(models.Model):
 
 class User_OpenAuth(models.Model):
     ID = models.IntegerField(primary_key=True)
-    UserID = models.IntegerField(db_index=True, blank=False)
+    UserID = models.IntegerField(db_index=True)
     NickName = models.CharField(max_length=255, default='')
     OAuthType = models.IntegerField()
     OAuthID = models.CharField(max_length=255, default='')
@@ -49,8 +40,10 @@ class User_OpenAuth(models.Model):
     Country = models.CharField(max_length=255, default='', blank=True)
     Province = models.CharField(max_length=255, default='', blank=True)
     City = models.CharField(max_length=255, default='', blank=True)
-    CTime = models.DateTimeField(auto_now_add=True, blank=False)
-    MTime = models.DateTimeField(auto_now_add=True, blank=False)
+    # CTime = models.DateTimeField(default=datetime.now(), blank=False)
+    # MTime = models.DateTimeField(default=datetime.now(), blank=False)
+    CTime = models.DateTimeField('创建时间', default=timezone.now)
+    MTime = models.DateTimeField('更新时间', default=timezone.now)
 
     class Meta:
         db_table = 'User_OpenAuth'
@@ -60,12 +53,15 @@ class User_OpenAuth(models.Model):
 
 class User_LocalAuth(models.Model):
     ID = models.IntegerField(primary_key=True, blank=False)
-    UserID = models.IntegerField(db_index=True, blank=False)
-    LAuthType = models.CharField(max_length=100, default='', blank=False)
+    UserID = models.IntegerField(db_index=True)
+    LAuthType = models.IntegerField(blank=False)
     UserName = models.CharField(max_length=255, unique=True, db_index=True, blank=False)
     Password = models.CharField(max_length=255, blank=False)
-    CTime = models.DateTimeField(auto_now_add=True, blank=False)
-    MTime = models.DateTimeField(auto_now_add=True, blank=False)
+    # CTime = models.DateTimeField(default=datetime.now(), blank=False)
+    # MTime = models.DateTimeField(default=datetime.now(), blank=False)
+    IsActive = models.IntegerField(default=0)
+    CTime = models.DateTimeField('创建时间', default=timezone.now)
+    MTime = models.DateTimeField('更新时间', default=timezone.now)
 
     class Meta:
         db_table = 'User_LocalAuth'

@@ -12,7 +12,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     API端：允许查看和编辑用户
     """
-    queryset = User.objects.all().order_by('-date_joined')
+    queryset = User.objects.all()
     serializer_class = UserSerializer
 
 

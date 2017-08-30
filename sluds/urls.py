@@ -9,10 +9,11 @@ router = routers.DefaultRouter()
 
 urlpatterns = [
     url(r'^', include(router.urls)),
-    url(r'^user/get_user_info', views.get_user_info),
-    url(r'^user/update_user_info', views.update_user_info),
-
+    url(r'^user/get_user_info.luds', views.get_user_info),
+    url(r'^user/update_user_info.luds', views.update_user_info),
+    url(r'^user/localregist_user_email.luds', views.localregist_user_email),
+    url(r'^user/checkin_email.luds', views.checkin_email),
     ]
 #url(r'^user/get_user_info.uds/?userid=P<0-9>+/$', views.get_user_info),
-# url(r'^users/$', views.users_detail),
+#url(r'^users/$', views.users_detail),
 #urlpatterns = format_suffix_patterns(urlpatterns)
