@@ -17,14 +17,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework.authtoken',
     'debug_toolbar',
     'polls',
     'quickstart',
-    'rest_framework',
     'sluds',
-
+    'books',
+    'snippets',
 ]
-#'snippets',
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -37,6 +38,20 @@ MIDDLEWARE = [
 ]
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 ROOT_URLCONF = 'samp.urls'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',#分页
+    'PAGE_SIZE': 2,
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning', #版本
+}
 
 TEMPLATES = [
     {
@@ -59,7 +74,6 @@ WSGI_APPLICATION = 'samp.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 # 'mysql://model:modelK$j$d1KDG@192.168.13.44/model'
 DATABASES = {
     'default': {
@@ -89,7 +103,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

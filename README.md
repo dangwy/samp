@@ -57,6 +57,15 @@
 - 运行开发环境：python manage.py runserver [0.0.0.0:8080]
 - 调试模式: --noreload --traceback
 
+---
+- 安装pymysql: conda install pymysql
+- 并在mysite/__init__.py中进行初始化:
+
+`
+import pymysql
+pymysql.install_as_MySQLdb()
+`
+
 # 测试命令
 - curl -i -H "Content-Type: application/json" -X POST -d "{"""title""":"""Read a book"""}" http://localhost:5000/todo/api/v1.0/tasks
 

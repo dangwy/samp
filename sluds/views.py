@@ -8,34 +8,37 @@ from rest_framework.parsers import JSONParser
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from models import Users, User_OpenAuth, User_LocalAuth
+from .models import Users, User_OpenAuth, User_LocalAuth
 from rest_framework import viewsets
-from serializers import UsersSerializer, User_OpenAuthSerializer, User_LocalAuthSerializer
+from .serializers import UsersSerializer, User_OpenAuthSerializer, User_LocalAuthSerializer
 from django.core import serializers
-import json,simplejson
-from rcode import returncodeDict
+from .rcode import returncodeDict
 from django.db import connection
 from datetime import datetime
 from django.core.mail import send_mail,BadHeaderError
 from django.utils import timezone
+# from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework import permissions
 
 import logging
 #logger = logging.getLogger(__name__)
 logger = logging.getLogger('django')
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = Users.objects.all()
-    serializer_class = UsersSerializer
-
-class User_OpenAuthViewSet(viewsets.ModelViewSet):
-    queryset = User_OpenAuth.objects.all()
-    serializer_class = User_OpenAuthSerializer
-
-class User_LocalAuthViewSet(viewsets.ModelViewSet):
-    queryset = User_LocalAuth.objects.all()
-    serializer_class = User_LocalAuthSerializer
+# class UserViewSet(viewsets.ModelViewSet):
+#     queryset = Users.objects.all()
+#     serializer_class = UsersSerializer
+#
+# class User_OpenAuthViewSet(viewsets.ModelViewSet):
+#     queryset = User_OpenAuth.objects.all()
+#     serializer_class = User_OpenAuthSerializer
+#
+# class User_LocalAuthViewSet(viewsets.ModelViewSet):
+#     queryset = User_LocalAuth.objects.all()
+#     serializer_class = User_LocalAuthSerializer
 
 def resprefix(returncode):
     res = {}
@@ -57,10 +60,18 @@ def users_detail(request):
             serializer.save()
             logger.debug(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-    logger.error(serializer.errors)
+    logger.error(serializer.errors, serializer.errors)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class GetUserInfo(APIView):
+    """
+    (13)用户信息查询接口
+    """
+    def get_pk(self, request):
+        pass
+
 @api_view(['GET', 'POST'])
+@permission_classes((permissions.AllowAny,))
 def get_user_info(request):
     """
     (13)用户信息查询接口
@@ -92,8 +103,8 @@ def get_user_info(request):
             logger.info(res)
             return Response(res)
         except:
-            logger.error(returncodeDict['RC990506'])
-            return Response(returncodeDict['RC990506'])
+            logger.error(serializer.errors, returncodeDict['RC990506'])
+            return Response(serializer.errors, returncodeDict['RC990506'])
 
 @api_view(['POST'])
 def update_user_info(request):
@@ -113,6 +124,7 @@ def update_user_info(request):
             logger.error(returncodeDict['RC990501'])
             return Response(returncodeDict['RC990501'])
         # check usesr exist
+
         try:
             userid = Users.objects.get(pk = UserID)
         except Users.DoesNotExist:
@@ -129,8 +141,8 @@ def update_user_info(request):
             logger.info(res)
             return Response(res)
         else:
-            logger.error(returncodeDict['RC990506'])
-            return Response(returncodeDict['RC990506'])
+            logger.error(serializer.errors, returncodeDict['RC990506'])
+            return Response(serializer.errors, returncodeDict['RC990506'])
 
         # begin update User
 

@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from django.conf import settings
 from django.db import models
+from django.db.models.signals import  post_save
 from datetime import datetime
 from django.utils import timezone
-
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 class Users(models.Model):
     UserID = models.IntegerField('用户编号',primary_key=True)
@@ -68,3 +72,17 @@ class User_LocalAuth(models.Model):
 
     def __repr__(self):
         return u'<User_LocalAuth: %d, %s>' % (self.UserID, self.UserName)
+
+# 为每个用户添加token值
+# @receiver(post_save, sender=settings.AUTH_USER_MODEL)
+# def create_auth_token(sender, instance=None, created=False, **kwargs):
+#     if created:
+#         Token.objects.create(user=instance)
+
+'''
+#sender指定实体
+@receiver(post_save, sender=Users)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
+'''

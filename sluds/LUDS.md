@@ -1,7 +1,7 @@
 # 接口测试
 ## (13)用户信息查询接口
 - [GET](http://127.0.0.1:8080/sluds/user/?version=1.0&action=get_user_info&UserID=1)
-- [POST](http://127.0.0.1:8080/sluds/user/get_user_info)
+- [POST](http://127.0.0.1:8080/sluds/user/get_user_info.luds/)
 
 `
 {
@@ -13,7 +13,7 @@
 }`
 
 ## (14)用户基本信息更新接口
-[POST](http://127.0.0.1:8080/sluds/user/update_user_info.luds)
+[POST](http://127.0.0.1:8080/sluds/user/update_user_info.luds/)
 
 `{
 	"version": "1.0",
@@ -29,7 +29,7 @@
 }`
 
 ## (20)邮箱注册接口
-[POST](http://127.0.0.1:8080/sluds/user/localregist_user_email.luds)
+[POST](http://127.0.0.1:8080/sluds/user/localregist_user_email.luds/)
 
 `{
     "version" : "1.0",
@@ -41,7 +41,7 @@
 }`
 
 ## (21)邮箱注册验证接口
-[POST](http://127.0.0.1:8080/sluds/user/checkin_email.luds)
+[POST](http://127.0.0.1:8080/sluds/user/checkin_email.luds/)
 
 `{
     "version" : "1.0",
